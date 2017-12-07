@@ -52,12 +52,14 @@ module.exports = function ({ types: t }) {
 
 				path.get('body').map(path => path.remove());
 
+				const { filename } = file.file.opts;
+
 				path.pushContainer(
 					'body',
 					t.callExpression(
 						t.identifier('define'),
 						[
-							t.stringLiteral(file.file.opts.filename),
+							...(() => filename ? [t.stringLiteral(filename)] : [])(),
 							this.amdDepArr,
 							this.amdFn,
 						]
