@@ -39,7 +39,7 @@ module.exports = function ({ types: t }) {
 		visitor: {
 
 			// Wrap file in AMD
-			Program(path, file) {
+			Program(path, state) {
 				this.amdDepArr = t.arrayExpression([]);
 
 				this.amdFn = t.functionExpression(
@@ -52,7 +52,7 @@ module.exports = function ({ types: t }) {
 
 				path.get('body').map(path => path.remove());
 
-				const { filename } = file.file.opts;
+				const { filename } = state.file.opts;
 
 				path.pushContainer(
 					'body',
@@ -68,13 +68,13 @@ module.exports = function ({ types: t }) {
 			},
 
 			// Remove import statements
-			ImportDeclaration(path, file) {
+			ImportDeclaration(path) {
 				this.dependencies.add(path.node);
 				path.remove();
 			},
 
 			// Replace `export default` with `return`
-			ExportDefaultDeclaration(path, file) {
+			ExportDefaultDeclaration(path) {
 				const declaration = path.get('declaration');
 
 				path.replaceWith(
